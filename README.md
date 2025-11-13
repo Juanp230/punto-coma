@@ -55,18 +55,13 @@ RN11	El flujo es: Registrar cliente → Crear pedido → Agregar ítems → Calc
 
 arquitectura 
 /punto-coma/
--src/
-App.java
-    /domain/
-        -clientes.java
-        -pedido.java
-        -producto.java
-        -estadoPedido.java
-        -tipoProducto.java
-        -itemPedido.java
-    /Service/
-        -ServicePapeleria.java    
-
-
-
-ServicePapeleria
+├─ domain/
+│   ├─ Cliente.java
+│   ├─ Producto.java        // catálogo: BN, COLOR, ANILLADO
+│   ├─ ItemPedido.java
+│   ├─ Pedido.java
+│   └─ EstadoPedido.java    // EN_CREACION, CONFIRMADO
+├─ service/
+│   └─ PapeleriaService.java
+└─ app/
+    └─ App.java             // main con flujo de consola
