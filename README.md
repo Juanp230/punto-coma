@@ -18,21 +18,80 @@ RF8.Listar resumen: cabecera (cliente y estado), detalle (precio normal o por vo
 
 
 2. criterios de aceptacion 
-CA1. el sistema solicita y almacena un nombre y telefono. no permite continuar si uno de los dos esta vacio.
-CA2. Al crear un producto se pone en estado EN_CREACION
-CA3. El sistema permite agregar 1 o varios ITEMS
-CA4. Si el cliente solicita 100 o más impresiones en blanco y negro, el precio unitario cambia a $150.
-- Si el cliente solicita 50 o más impresiones a color, el precio unitario cambia a $400.
-- En los demás casos, se aplican los precios normales ($200 y $500 respectivamente).
-CA5. Calculamos los subtotales por item pa los descuentos y eso (10% si hay al menos un anillado y ≥ 30 impresiones.
- • 5% si el total bruto supera $40.000 y no aplica el anterior.
- • Sin descuento si no cumple ninguna. el total final es totalbruto-descuento)
-CA6. Al confirmar un producto el estado cambia a CONFIRMADO Y NO PUEDE MODIFICARSE
-CA7.No se pueden aceptar cantidades menores a 0
-CA8.Se muestra un resumen con los datos del cliente detalles del ITEMS(precio unitario y subtotal) y el total bruto
+CA1
+
+Dado que el usuario ingresa los datos del cliente
+Cuando el nombre o el teléfono están vacíos
+Entonces el sistema no permite continuar.
+
+Dado que el usuario ingresa nombre y teléfono válidos
+Cuando confirma el registro
+Entonces el cliente se almacena correctamente.
+
+CA2
+
+Dado un cliente válido
+Cuando se crea un nuevo pedido
+Entonces el pedido inicia en estado EN_CREACION.
+
+CA3
+
+Dado un pedido en estado EN_CREACION
+Cuando el usuario agrega uno o varios ítems con cantidades válidas
+Entonces los ítems se agregan correctamente.
+
+CA4
+
+Dado que se solicitan 100 o más impresiones B/N
+Cuando se calcula el precio unitario
+Entonces el precio es $150.
+
+Dado que se solicitan menos de 100 impresiones B/N
+Cuando se calcula el precio unitario
+Entonces el precio es $200.
+
+Dado que se solicitan 50 o más impresiones a color
+Cuando se calcula el precio unitario
+Entonces el precio es $400.
+
+Dado que se solicitan menos de 50 impresiones a color
+Cuando se calcula el precio unitario
+Entonces el precio es $500.
+
+CA5
+
+Dado un pedido con al menos un anillado y 30 o más impresiones
+Cuando se calcula el total
+Entonces se aplica un descuento del 10%.
+
+Dado un pedido sin anillado o con menos de 30 impresiones y total bruto mayor a $40.000
+Cuando se calcula el total
+Entonces se aplica un descuento del 5%.
+
+Dado un pedido que no cumple ninguna condición de descuento
+Cuando se calcula el total
+Entonces no se aplica descuento.
+
+CA6
+
+Dado un pedido en estado EN_CREACION
+Cuando el usuario confirma el pedido
+Entonces el estado pasa a CONFIRMADO y no se puede modificar.
+
+CA7
+
+Dado que el usuario intenta agregar un ítem con cantidad menor o igual a 0
+Cuando el sistema valida ese ítem
+Entonces se rechaza y se muestra error.
+
+CA8
+
+Dado un pedido válido con cálculo realizado
+Cuando el usuario solicita el resumen
+Entonces se muestran cliente, ítems, precio unitario, subtotal, total bruto, descuento y total final.
 
 
-REGLAS 
+3. REGLAS 
 RN1	Todo pedido debe estar asociado a un cliente con nombre y teléfono válidos.
 RN2	Un pedido solo puede tener dos estados: EN_CREACION y CONFIRMADO.
 RN3	Las cantidades de productos deben ser mayores que cero; no se permiten valores negativos o nulos.
@@ -53,15 +112,34 @@ RN11	El flujo es: Registrar cliente → Crear pedido → Agregar ítems → Calc
 
 
 
-arquitectura 
+4. pruebas
+CA1: ![alt text](image.png)
+CA1.2: ![alt text](image-1.png)
+CA2: ![alt text](image-2.png)
+CA3: ![alt text](image-3.png)
+CA4: ![alt text](image-4.png)
+CA5: ![alt text](image-5.png)
+CA6: ![alt text](image-6.png)
+CA7: ![alt text](image-7.png)
+CA8: ![alt text](image-8.png)
+
+5. arquitectura 
 /punto-coma/
-├─ domain/
-│   ├─ Cliente.java
-│   ├─ Producto.java        // catálogo: BN, COLOR, ANILLADO
-│   ├─ ItemPedido.java
-│   ├─ Pedido.java
-│   └─ EstadoPedido.java    // EN_CREACION, CONFIRMADO
-├─ service/
-│   └─ PapeleriaService.java
+├─bin/
+├─assets/
+├─src/
+├    ├─ domain/
+│    │   ├─ Cliente.java
+│    │   ├─ Producto.java        // catálogo: BN, COLOR, ANILLADO
+│    │   ├─ ItemPedido.java
+│    │   ├─ Pedido.java
+│    │   └─ EstadoPedido.java    // EN_CREACION, CONFIRMADO
+│    ├─ service/
+│    │   └─ PapeleriaService.java
 └─ app/
     └─ App.java             // main con flujo de consola
+
+    UML
+    ![alt text](1f1538e8-2930-402d-b357-7d003cbbd263.jpg)
+
+    
